@@ -170,7 +170,7 @@ export const installPackages = async (selectedApps) => {
     if (selectedApps.length > 0) {
         console.log('Iniciando instalación de aplicaciones seleccionadas...');
         for (const app of selectedApps) {
-            await installPackage(app, packages[app]);
+            await Promise.all(selectedApps.map(app => installPackage(app, packages[app]))); 
         }
         console.log('Proceso de instalación completado.');
     } else {

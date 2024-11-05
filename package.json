@@ -3,12 +3,13 @@
   "version": "1.1.0",
   "type": "module",
   "description": "",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "bin": {
-    "app-installer": "./src/index.js"
+    "app-installer": "./src/index.ts"
   },
   "scripts": {
-    "dev": "node src/index.js",
+    "dev": "npm run build && node dist/index.js",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,8 +17,12 @@
   "license": "ISC",
   "dependencies": {
     "cli-spinners": "^3.2.0",
-    "inquirer": "^10.1.8",
+    "enquirer": "^2.4.1",
     "ora": "^6.3.1",
     "yoctocolors": "^2.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.12.0",
+    "typescript": "^5.6.3"
   }
 }

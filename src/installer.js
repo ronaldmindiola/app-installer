@@ -1,7 +1,9 @@
 // src/installer.js
 import { exec } from 'child_process';
 import ora from 'ora';
+import colors from "yoctocolors";
 import { promisify } from 'util';
+import { createSpinner } from './utils/spinner.js';
 
 const execAsync = promisify(exec);
 
@@ -107,41 +109,48 @@ export const packages = Object.fromEntries(
 
 // Función para verificar si una aplicación está instalada
 export const isAppInstalled = async (packageId) => {
+    const spinner = createSpinner('Checking if app is installed...', 'dots');
+
+    spinner.startSpinner();
     try {
         const { stdout } = await execAsync(`winget list --id ${packageId}`);
         // Devuelve true si se encuentra el packageId en la salida
+        spinner.stopSpinner();
         return stdout.includes(packageId);
     } catch ({ message }) {
         // Solo registra el error y retorna false
         //console.error(`❌ Error al verificar la instalación de ${packageId}: ${message}`);
         return false;
     }
+    
 };
 
 
 
 // Función para instalar una aplicación individual
 const installPackage = async (app, packageId) => {
+    
     try {
         // Verificar si la aplicación ya está instalada antes de mostrar el mensaje de instalación
         const installed = await isAppInstalled(packageId);
+        
 
         if (installed) {
-            console.log(`✔ ${app} ya está instalado.`);
+            console.log(`✔ ${app} ${colors.green('✔️')} it's already installed.`);
             return;
         }
 
         // Solo mostrar el spinner si la instalación procede
-        const spinner = ora(`Instalando ${app}...`).start();
+        const spinner = ora(`Installing ${app}...`).start();
         spinner.color = 'green';
 
         let isInstalling = true;
         const toggleMessage = () => {
             if (isInstalling) {
-                spinner.text = `Instalando ${app}...`;
+                spinner.text = `Installing ${app}...`;
                 spinner.color = 'green';
             } else {
-                spinner.text = 'Por favor espere...';
+                spinner.text = 'Please wait...';
                 spinner.color = 'yellow';
             }
             isInstalling = !isInstalling;
@@ -152,14 +161,14 @@ const installPackage = async (app, packageId) => {
         }, 1000);
 
         const { stdout, stderr } = await execAsync(`winget install --id=${packageId} -e`);
-        spinner.succeed(`✔️ Instalación de ${app} completada.`);
+        spinner.succeed(`✔️ Installation of ${app} completed.`);
 
         if (stderr) {
-            console.warn(`⚠️ Advertencia durante la instalación de ${app}: ${stderr}`);
+            console.warn(`⚠️ Warning during the installation of ${app}: ${stderr}`);
         }
 
     } catch (error) {
-        console.error(`❌ Error al instalar ${app}: ${error.message}`);
+        console.error(`❌ Error installing ${app}: ${error.message}`);
     }
 };
 
@@ -168,31 +177,31 @@ const installPackage = async (app, packageId) => {
 // Función principal para instalar las aplicaciones seleccionadas
 export const installPackages = async (selectedApps) => {
     if (selectedApps.length > 0) {
-        console.log('Iniciando instalación de aplicaciones seleccionadas...');
+        console.log('▶️  Starting installation of selected applications...');
         for (const app of selectedApps) {
             await installPackage(app, packages[app]);
         }
-        console.log('Proceso de instalación completado.');
+        console.log('Installation process completed.');
     } else {
-        console.log('⚠️ No se seleccionaron aplicaciones para instalar.');
+        console.log('⚠️ No applications selected for installation.');
     }
 };
 
 // Función para verificar las versiones de las aplicaciones instaladas
 export const checkVersions = async () => {
-    console.log('Verificando versiones de las aplicaciones instaladas...');
+    console.log('Checking versions of installed applications...');
     for (const [app, packageId] of Object.entries(packages)) {
-        const spinner = ora(`Verificando ${app}...`).start();
+        const spinner = ora(`Checking ${app}...`).start();
         try {
             const { stdout } = await execAsync(`winget list --id ${packageId}`);
             if (stdout.includes(packageId)) {
-                spinner.succeed(`${app} está instalado.`);
+                spinner.succeed(`${app} is installed.`);
             } else {
-                spinner.info(`⚠️ ${app} no está instalado.`);
+                spinner.info(`⚠️ ${app} is not installed.`);
             }
         } catch (error) {
-            spinner.fail(`❌ No se pudo verificar ${app}`);
-            console.error(`Detalles del error: ${error.message}`);
+            spinner.fail(`❌ Could not verify ${app}`);
+            console.error(`Error details: ${error.message}`);
         }
     }
 };

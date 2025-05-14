@@ -1,0 +1,93 @@
+{
+  "Navegadores": [
+    { "name": "Arc", "id": "TheBrowserCompany.Arc" },
+    { "name": "Google Chrome", "id": "Google.Chrome" },
+    { "name": "Mozilla Firefox", "id": "Mozilla.Firefox" },
+    { "name": "Brave", "id": "Brave.Brave" }
+  ],
+  "Lectores PDF": [
+    { "name": "Adobe Acrobat Reader DC (64 bits)", "id": "Adobe.Acrobat.Reader.64-bit" },
+    { "name": "Foxit PDF Reader", "id": "Foxit.FoxitReader" }
+  ],
+  "Utilidades del Sistema": [
+    { "name": "CCleaner", "id": "Piriform.CCleaner" },
+    { "name": "Malwarebytes", "id": "Malwarebytes.Malwarebytes" },
+    { "name": "7-Zip", "id": "7zip.7zip" },
+    { "name": "WinRAR", "id": "RARLab.WinRAR" },
+    { "name": "WinDirStat", "id": "WinDirStat.WinDirStat" },
+    { "name": "WinMerge", "id": "WinMerge.WinMerge" },
+    { "name": "PowerToys", "id": "Microsoft.PowerToys" },
+    { "name": "HWiNFO", "id": "REALiX.HWiNFO" },
+    { "name": "EarTrumpet", "id": "File-New-Project.EarTrumpet" },
+    { "name": "AppInstaller", "id": "Microsoft.AppInstaller" },
+    { "name": "Windows Terminal", "id": "Microsoft.WindowsTerminal" },
+    { "name": "Windows Terminal Preview", "id": "Microsoft.WindowsTerminal.Preview" },
+    { "name": "Files", "id": "YairAichenbaum.Files" },
+    { "name": "Shell", "id": "nilesoft.shell" },
+    { "name": "TranslucentTB", "id": "CharlesMilette.TranslucentTB" }
+  ],
+  "Almacenamiento en la Nube": [
+    { "name": "Dropbox", "id": "Dropbox.Dropbox" },
+    { "name": "Google Drive", "id": "Google.GoogleDrive" },
+    { "name": "OneDrive", "id": "Microsoft.OneDrive" },
+    { "name": "Box One", "id": "Box.BoxOne" }
+  ],
+  "Seguridad": [
+    { "name": "Avast Free", "id": "AvastSoftware.Avast" },
+    { "name": "Bitdefender", "id": "Bitdefender.Bitdefender" },
+    { "name": "ExpressVPN", "id": "ExpressVPN.ExpressVPN" },
+    { "name": "LastPass", "id": "LastPass.LastPass" }
+  ],
+  "Desarrollo": [
+    { "name": "Visual Studio Code", "id": "Microsoft.VisualStudioCode" },
+    { "name": "VSCodium", "id": "VSCodium.VSCodium" },
+    { "name": "Notepad++", "id": "NotepadPlusPlus.NotepadPlusPlus" },
+    { "name": "Sublime Text", "id": "SublimeHQ.SublimeText.3" },
+    { "name": "Atom", "id": "atom.Atom" },
+    { "name": "GitHub Desktop", "id": "GitHub.GitHubDesktop" },
+    { "name": "Git", "id": "Git.Git" },
+    { "name": "Node.js", "id": "OpenJS.NodeJS" },
+    { "name": "Node.js (LTS)", "id": "OpenJS.NodeJS.LTS" },
+    { "name": "PNPM", "id": "pnpm.pnpm" },
+    { "name": "Postman", "id": "Postman.Postman" },
+    { "name": "FileZilla", "id": "FileZilla.FileZilla" }
+  ],
+  "Frameworks y Runtimes": [
+    { "name": ".NET Framework Developer Pack", "id": "Microsoft.DotNet.Framework.DeveloperPack_4" },
+    { "name": "Microsoft Visual C++ 2005 Redistributable", "id": "Microsoft.VCRedist.2005.x64" },
+    { "name": "Microsoft Visual C++ 2008 Redistributable", "id": "Microsoft.VCRedist.2008.x64" },
+    { "name": "Microsoft Visual C++ 2010 Redistributable Package", "id": "Microsoft.VCRedist.2010.x64" }
+  ],
+  "Música y Audio": [
+    { "name": "Spotify", "id": "Spotify.Spotify" },
+    { "name": "Deezer", "id": "Deezer.Deezer" },
+    { "name": "Amazon Music", "id": "Amazon.AmazonMusic" },
+    { "name": "Apple Music", "id": "Apple.Music" },
+    { "name": "Youtube Music", "id": "YoutubeMusic.YoutubeMusic" },
+    { "name": "iTunes", "id": "Apple.iTunes" },
+    { "name": "FX Sound", "id": "FxSoundLLC.FxSound" }
+  ],
+  "Multimedia": [
+    { "name": "VLC Media Player", "id": "VideoLAN.VLC" },
+    { "name": "K-Lite Codec Pack", "id": "CodecGuide.K-LiteCodecPack.Mega" },
+    { "name": "Kodi", "id": "XBMCFoundation.Kodi" }
+  ],
+  "Productividad": [
+    { "name": "Notion", "id": "Notion.Notion" },
+    { "name": "DeepL", "id": "DeepL.DeepL" },
+    { "name": "OhMyPosh", "id": "JanDeDobbeleer.OhMyPosh" }
+  ],
+  "Comunicación": [
+    { "name": "Beeper", "id": "Beeper.Beeper" }
+  ],
+  "Captura y Streaming": [
+    { "name": "ShareX", "id": "ShareX.ShareX" },
+    { "name": "OBS Studio", "id": "OBSProject.OBSStudio" }
+  ],
+  "Descarga": [
+    { "name": "JDownloader 2", "id": "AppWork.JDownloader" }
+  ],
+  "Acceso Remoto": [
+    { "name": "AnyDesk", "id": "AnyDeskSoftwareGmbH.AnyDesk" }
+  ]
+}

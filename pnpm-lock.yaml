@@ -8,9 +8,15 @@ importers:
 
   .:
     dependencies:
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
       cli-spinners:
         specifier: ^3.2.0
         version: 3.2.0
+      consola:
+        specifier: ^3.2.3
+        version: 3.2.3
       inquirer:
         specifier: ^10.1.8
         version: 10.1.8
@@ -143,6 +149,10 @@ packages:
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  consola@3.2.3:
+    resolution: {integrity: sha512-I5qxpzLv+sJhTVEoLYNcTW+bThDCPsit0vLNKShZx6rLtpilNpmmeTPaeqJb9ZE9dV3DGaeby6Vuhrw38WjeyQ==}
+    engines: {node: ^14.18.0 || >=16.10.0}
 
   defaults@1.0.4:
     resolution: {integrity: sha512-eFuaLoy/Rxalv2kr+lqMlUnrDWV+3j4pljOIJgLIhI058IQfWJ7vXhyEIHu+HtC738klGALYxOKDO0bQP3tg8A==}
@@ -434,6 +444,8 @@ snapshots:
       color-name: 1.1.4
 
   color-name@1.1.4: {}
+
+  consola@3.2.3: {}
 
   defaults@1.0.4:
     dependencies:

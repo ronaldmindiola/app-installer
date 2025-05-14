@@ -1,60 +1,50 @@
-import inquirer from 'inquirer';
-import ora from 'ora';
-import { installPackages } from './installer.js'; // Añade las nuevas funciones si es necesario
-
-const mainMenu = [
-  {
-    type: 'list',
-    name: 'action',
-    message: '¿Qué acción deseas realizar?',
-    choices: [
-      'Instalar aplicaciones',
-      'Actualizar aplicaciones',
-      'Desinstalar aplicaciones',
-      'Ver estado de instalación',
-      'Exportar configuración',
-      'Importar configuración',
-      'Mostrar ayuda',
-      'Salir'
-    ]
-  }
-];
+import inquirer from "inquirer";
+import {
+  installPackages,
+  uninstallPackages,
+  updatePackages,
+  help,
+  exit,
+} from "./installer.js";
+import { mainMenu } from "./menu.js";
+import chalk from "chalk";
+import createSpinner from "./spinner.js";
 
 async function main() {
+  console.clear();
+  const spinner = createSpinner();
+  spinner.start(`${chalk.blue("Loading...")}`, "dots2", ["cyan"]);
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula la carga de la app
+  spinner.setColor(["yellow"]);
+  spinner.stop();
+  console.clear();
+
   while (true) {
     const { action } = await inquirer.prompt(mainMenu);
-
     switch (action) {
-      case 'Instalar aplicaciones':
+      case "install":
+        // Implementar la función para instalar aplicaciones
         await installPackages();
         break;
-      case 'Actualizar aplicaciones':
+      case "update":
         // Implementar la función para actualizar aplicaciones
+        await updatePackages();
         break;
-      case 'Desinstalar aplicaciones':
-        // Implementar la función para desinstalar aplicaciones
+      case "uninstall":
+        await uninstallPackages();
         break;
-      case 'Ver estado de instalación':
-        // Implementar la función para mostrar el estado de instalación
-        break;
-      case 'Exportar configuración':
-        // Implementar la función para exportar configuración
-        break;
-      case 'Importar configuración':
-        // Implementar la función para importar configuración
-        break;
-      case 'Mostrar ayuda':
+      case "help":
         // Implementar la función para mostrar ayuda/documentación
+        await help();
         break;
-      case 'Salir':
-        const spinner = ora('Cerrando el programa...').start();
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simula un proceso de cierre
-        spinner.succeed('✔️ Gracias por usar el instalador. ¡Hasta luego!');
+      case "exit":
+        
+        await exit();
         return;
     }
   }
 }
 
-main().catch(error => {
-  console.error('❌ Se produjo un error:', error);
+main().catch((error) => {
+  console.error("An error occurred:", error);
 });

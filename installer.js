@@ -1,114 +1,210 @@
-import { exec } from 'child_process';
-import inquirer from 'inquirer';
-import ora from 'ora';
-import { promisify } from 'util';
+// installer.js
+import { exec } from "child_process";
+import inquirer from "inquirer";
+import { promisify } from "util";
+import { questionsInstall, questionsUninstall } from "./menu.js";
+import { packages } from "./appList.js";
+import createSpinner from "./spinner.js";
+import chalk from "chalk";
+import consola from "consola";
 
 const execAsync = promisify(exec);
 
-// Definir las aplicaciones disponibles
-const packages = {
-    //Adobe Acrobat Reader
-    //Powertoys
-    // Java Runtime Environment
-    //.NET Framework Developer Pack
-    // 7-Zip
-    // Postman
-    "Google Chrome": "Google.Chrome",
-    "Mozilla Firefox": "Mozilla.Firefox",
-    "Notion": "Notion.Notion",
-    "AnyDesk": "AnyDeskSoftwareGmbH.AnyDesk",
-    "iTunes": "Apple.iTunes",
-    "K-Lite Codec Pack": "CodecGuide.K-LiteCodecPack.Mega",
-    "VLC": "VideoLAN.VLC",
-    ".NET Framework Developer Pack": "Microsoft.DotNet.Framework.DeveloperPack_4",
-    "7-Zip": "7zip.7zip",
-    "Postman": "Postman.Postman",
-    
-};
+// Función principal para seleccionar e instalar aplicaciones
+export const installPackages = async () => {
+  const spinner = createSpinner();
+  try {
+    console.clear();
+    const { selectedApps } = await inquirer.prompt(questionsInstall);
 
-// Función para verificar si una aplicación está instalada
-const isAppInstalled = async (packageId) => {
-    try {
+    if (selectedApps.length === 0) {
+      // Muestra advertencia si no se seleccionan apps
+      consola.warn("No se seleccionaron aplicaciones para instalar.");
 
-        const { stdout } = await execAsync(`winget list --id ${packageId}`);
-        return stdout.includes(packageId);
-    } catch (error) {
-        console.error(`❌ Error al verificar la instalación de ${packageId}: ${error.message}`);
-        return false;
-
+      return; // Sale si elige no volver al menú
     }
+
+    for (const appName of selectedApps) {
+      const packageId = packages[appName];
+
+      if (packageId) {
+        spinner.start(`Instalando ${chalk.bold(`${appName}`)}...`);
+
+        if (await isAppInstalled(packageId)) {
+          spinner.succeed(`${chalk.bold(`${appName}`)} ya esta instalado.`);
+        } else {
+          await executeInstallCommand(appName, packageId);
+        }
+      } else {
+        consola.warn(`⚠️ ${appName} no tiene un ID de instalación.`);
+      }
+    }
+  } catch (error) {
+    spinner.fail("❌ Error en el proceso de instalación");
+    console.error("Detalles del error:", error.message);
+  }
 };
 
-// Función para instalar una aplicación individual
-const installPackage = async (app, packageId) => {
-    const spinner = ora(`Instalando ${app}...`).start();
+// Función principal para seleccionar y desinstalar aplicaciones
+export const uninstallPackages = async () => {
+  try {
+    const { selectedApps } = await inquirer.prompt(questionsUninstall);
 
-    // Verificar si la aplicación ya está instalada
+    if (selectedApps.length === 0) {
+      console.log("⚠️ No se seleccionaron aplicaciones para desinstalar.");
+      return;
+    }
+
+    for (const appName of selectedApps) {
+      const packageId = packages[appName];
+      if (packageId) {
+        // Verificar si la aplicación está instalada antes de intentar desinstalarla
+        if (await isAppInstalled(packageId)) {
+          await executeUninstallCommand(appName, packageId);
+        } else {
+          console.log(`⚠️ ${appName} no está instalado.`);
+        }
+      } else {
+        console.warn(`⚠️ ${appName} no tiene un ID de desinstalación.`);
+      }
+    }
+  } catch (error) {
+    console.error("❌ Error:", error.message);
+  }
+};
+
+export const updatePackages = async () => {
+  console.log("update");
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  console.clear();
+  return;
+};
+
+export const help = async () => {
+  console.log("help");
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return;
+};
+
+export const exit = async () => {
+  const spinner = createSpinner();
+  spinner.start("Closing...");
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula un proceso de cierre
+  spinner.succeed("See you later!");
+};
+
+// Verificar si la app ya está instalada
+const isAppInstalled = async (appName, packageId) => {
+  console.log("verficar app");
+  console.log(appName, packageId);
+
+  const spinner = createSpinner();
+  try {
+    spinner.start(`Checking ${appName}...`);
+    const { stdout } = await execAsync(`winget list --id ${packageId}`);
+    spinner.stop();
+    return stdout.includes(packageId);
+  } catch (error) {
+    spinner.fail(`Error al verificar ${packageId}: ${error.message}`);
+    console.clear();
+    return false;
+  }
+};
+
+// Función para ejecutar comandos
+const executeInstallCommand = async (appName, packageId) => {
+  const spinner = createSpinner();
+  spinner.start(`Instalando ${appName}...`);
+  spinner.setColor(["yellow"]);
+
+  try {
+    const { stdout, stderr } = await execAsync(
+      `winget install --id=${packageId} -e`
+    );
+    spinner.succeed(`${appName} instalado con éxito.`);
+    if (stderr)
+      console.warn(
+        `⚠️ Advertencia durante la instalación de ${appName}: ${stderr}`
+      );
+  } catch (error) {
+    spinner.fail(`❌ Error en la instalación de ${appName}`);
+    console.error(`Detalles del error:`, error.message);
+  }
+};
+
+// Función para ejecutar comandos de desinstalación
+const executeUninstallCommand = async (appName, packageId) => {
+  const spinner = createSpinner({
+    text: `Desinstalando ${appName}...`,
+    spinnerType: "dots",
+  }).start();
+
+  try {
+    const { stdout, stderr } = await execAsync(
+      `winget uninstall --id=${packageId} -e`
+    );
+    spinner.succeed(`${appName} desinstalado con éxito.`);
+    if (stderr)
+      console.warn(
+        `⚠️ Advertencia durante la desinstalación de ${appName}: ${stderr}`
+      );
+  } catch (error) {
+    spinner.fail(`❌ Error en la desinstalación de ${appName}`);
+    console.error(`Detalles del error:`, error.message);
+  }
+};
+
+// Instalar una aplicación
+/* const installPackage = async (appName, packageId) => {
+    
     if (await isAppInstalled(packageId)) {
-        spinner.succeed(`${app} ya está instalado.`);
+        console.log(`✅ ${appName} ya está instalado.`);
         return;
     }
+    await executeCommand(`winget install --id=${packageId} -e`, appName);
+}; */
 
+// Función principal para seleccionar e instalar apps
+/* export const installPackages = async () => {
     try {
-        const { stdout, stderr } = await execAsync(`winget install --id=${packageId} -e`);
-        spinner.succeed(`✔️ Instalación de ${app} completada.`);
-        if (stderr) console.warn(`⚠️ Advertencia durante la instalación de ${app}: ${stderr}`);
-    } catch (error) {
-        spinner.fail(`❌ Error al instalar ${app}`);
-        console.error(`Detalles del error:`);
-        console.error(`Mensaje: ${error.message}`);
-        console.error(`Salida de error: ${error.stderr}`);
-        console.error(`Código de salida: ${error.code}`);
-    }
-};
+        const { selectedApps } = await inquirer.prompt(questionsMenu);
 
-// Función principal para instalar las aplicaciones seleccionadas
-export const installPackages = async () => {
-    const questions = [
-        {
-            type: 'checkbox',
-            name: 'selectedApps',
-            message: 'Selecciona las aplicaciones a instalar:',
-            choices: Object.keys(packages)
-        }
-    ];
-
-    try {
-        const { selectedApps } = await inquirer.prompt(questions);
-        if (selectedApps.length > 0) {
-            console.log('Iniciando instalación de aplicaciones seleccionadas...');
-            for (const app of selectedApps) {
-                await installPackage(app, packages[app]);
-            }
-            console.log('Proceso de instalación completado.');
-        } else {
+        if (selectedApps.length === 0) {
             console.log('⚠️ No se seleccionaron aplicaciones para instalar.');
+            return;
         }
-    } catch (error) {
-        console.error('❌ Ocurrió un error durante el proceso de selección o instalación:', error);
-    }
-};
 
-// Función para verificar las versiones de las aplicaciones instaladas
-export const checkVersions = async () => {
-    console.log('Verificando versiones de las aplicaciones instaladas...');
-    for (const [app, packageId] of Object.entries(packages)) {
-        const spinner = ora(`Verificando ${app}...`).start();
+        for (const appName of selectedApps) {
+            const packageId = packages[appName];
+            if (packageId) 
+                await installPackage(appName, packageId);
+            else 
+            console.warn(`⚠️ ${appName} no tiene un ID de instalación.`);
+        }
+
+        console.log('Proceso de instalación completado.');
+    } catch (error) {
+        console.error('❌ Error en el proceso:', error.message);
+    }
+}; */
+
+// Verificar versiones instaladas
+/* export const checkVersions = async () => {
+    console.log('Verificando versiones...');
+    for (const [appName, packageId] of Object.entries(packages)) {
+        const spinner = ora(`Verificando ${appName}...`).start();
         try {
             const { stdout } = await execAsync(`winget list --id ${packageId}`);
-            if (stdout.includes(packageId)) {
-                spinner.succeed(`${app} está instalado.`);
-            } else {
-                spinner.info(`⚠️ ${app} no está instalado.`);
-            }
+            if (stdout.includes(packageId)) spinner.succeed(`${appName} está instalado.`);
+            else spinner.warn(`${appName} no está instalado.`);
         } catch (error) {
-            spinner.fail(`❌ No se pudo verificar ${app}`);
-            console.error(`Detalles del error: ${error.message}`);
+            spinner.fail(`Error verificando ${appName}`);
         }
     }
-};
+}; */
 
-// Si se ejecuta este archivo directamente
- if (import.meta.url === `file://${process.argv[1]}`) {
-    installPackages().catch(console.error);
+// Ejecución directa
+if (import.meta.url === `file://${process.argv[1]}`) {
+  installPackages().catch(console.error);
+  uninstallPackages().catch(console.error);
 }
